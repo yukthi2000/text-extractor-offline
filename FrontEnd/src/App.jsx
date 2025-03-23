@@ -10,12 +10,17 @@ function App() {
   const[transcription, setTranscription] = useState('dsadas')
   const [alertMessage, setAlertMessage] = useState('')
 const handleFile=(e)=>{
-  setfile(e.target.value)
+  setfile(e.target.files[0])
+setAlertMessage('') 
+
 }
 
 const handleSubmit= async(e)=>{
 e.preventDefault();
-if(!file) alert("Empty") ;
+if (!file) {
+  setAlertMessage('Please select a file to upload!') 
+  return
+}
 
 setloading(true)
 const formData = new FormData();
