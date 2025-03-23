@@ -25,9 +25,11 @@ if (!file) {
 setloading(true)
 const formData = new FormData();
 formData.append("file",file);
+console.log(formData);
+
 
 try{
-  const response = await fetch('http://localhost:5000/transcribe',{
+  const response = await fetch('http://localhost:5000/tanscribe',{
     method:'POST',
     body:formData,
   })

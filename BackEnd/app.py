@@ -1,19 +1,21 @@
 from flask import Flask,request, jsonify
 import whisper 
 import os
+from flask_cors import CORS 
 
 
 
 app = Flask(__name__)
+CORS(app)
 
 model = whisper.load_model("base")
 
-@app.route("/tanscribe",method =["POST"])
+@app.route("/tanscribe",methods =["POST"])
 def transcribe():
     if "file" not in request.files:
         return jsonify({"error":"NO file uploaded!"}),400
     
-    file = request.files["files"]
+    file = request.files["file"]
     file_path = "uploaded_audio.mp3"
     file.save(file_path)
 
@@ -25,4 +27,4 @@ def transcribe():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port = 5000)
-    
+
