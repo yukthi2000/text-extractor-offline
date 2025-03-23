@@ -60,11 +60,15 @@ try{
         </form>
         </div>
         {transcription && (
-          <div className="">
-            <h2 className='text-red-500 font-mono text-3xl' >Transcription</h2>
-            <p className='bg-blue-300 font-serif inline'>{transcription}</p>
-          </div>
-        )}
+          <>
+    <h2 className="text-red-500 font-mono text-3xl">Transcription</h2>
+
+  <div className="w-full max-w-full h-100 overflow-y-auto">
+    <p className="bg-blue-300 font-serif block whitespace-pre-wrap">{transcription}</p>
+  </div>
+          </>
+)}
+
                 {alertMessage && (
           <div className="mt-4 p-4 bg-red-100 text-red-700 border-l-4 border-red-500">
             <span className="font-bold">Error:</span> {alertMessage}
