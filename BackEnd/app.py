@@ -7,6 +7,7 @@ import soundfile as sf
 from pydub import AudioSegment
 import tempfile
 import subprocess
+import io
 
 app = Flask(__name__)
 CORS(app)
@@ -61,8 +62,8 @@ def transcribe():
 
     return jsonify({"text": result["text"]})
 
-@app.route("/vidtranscribe", methods=["POST"])
-def transcribe_video():
+# @app.route("/vidtranscribe", methods=["POST"])
+# def transcribe_video():
     if 'file' not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
 
@@ -85,6 +86,48 @@ def transcribe_video():
             f.write(transcript)
 
         return send_file(transcript_path, as_attachment=True, download_name="transcript.txt")
+
+
+@app.route("/vidtranscribe", methods=["POST"])
+def transcribe_video():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    video_file = request.files['file']
+    
+    with tempfile.TemporaryDirectory() as temp_dir:
+        video_path = os.path.join(temp_dir, video_file.filename)
+        audio_path = os.path.join(temp_dir, "audio.wav")
+        transcript_path = os.path.join(temp_dir, "transcript.txt")
+
+        video_file.save(video_path)
+        extract_audio(video_path, audio_path)
+
+        result = model.transcribe(audio_path)
+        segments = result.get("segments", [])
+        
+        transcript = ""
+        for segment in segments:
+            start = segment.get("start", 0)
+            end = segment.get("end", 0)
+            text = segment.get("text", "")
+            transcript += f" {text}\n"
+
+        with open(transcript_path, "w", encoding="utf-8") as f:
+            f.write(transcript)
+
+        # Read the file content and close it before sending
+        with open(transcript_path, "rb") as f:
+            file_content = f.read()
+        
+        response = send_file(
+            io.BytesIO(file_content),
+            as_attachment=True,
+            download_name="transcript.txt",
+            mimetype='text/plain'
+        )
+        
+        return response
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
