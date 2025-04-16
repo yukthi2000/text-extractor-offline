@@ -1,15 +1,28 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify ,send_file
 import whisper
 import os
 from flask_cors import CORS
 import noisereduce as nr
 import soundfile as sf
 from pydub import AudioSegment
+import tempfile
+import subprocess
 
 app = Flask(__name__)
 CORS(app)
 
 model = whisper.load_model("base")
+
+
+def extract_audio(video_path, audio_path):
+    cmd = [
+        "ffmpeg", "-i", video_path,
+        "-ar", "16000", "-ac", "1",
+        "-c:a", "pcm_s16le", "-y",
+        audio_path
+    ]
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
 
 def reduce_noise(input_file, output_file):
     # Convert MP3 to WAV using pydub
@@ -47,6 +60,8 @@ def transcribe():
     os.remove(cleaned_audio_path)
 
     return jsonify({"text": result["text"]})
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
