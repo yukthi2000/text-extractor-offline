@@ -61,7 +61,30 @@ def transcribe():
 
     return jsonify({"text": result["text"]})
 
+@app.route("/vidtranscribe", methods=["POST"])
+def transcribe_video():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
 
+    video_file = request.files['file']
+    
+    with tempfile.TemporaryDirectory() as temp_dir:
+        video_path = os.path.join(temp_dir, video_file.filename)
+        audio_path = os.path.join(temp_dir, "audio.wav")
+        transcript_path = os.path.join(temp_dir, "transcript.txt")
+
+        video_file.save(video_path)
+        extract_audio(video_path, audio_path)
+
+        segments, _ = model.transcribe(audio_path)
+        transcript = ""
+        for segment in segments:
+            transcript += f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text}\n"
+
+        with open(transcript_path, "w", encoding="utf-8") as f:
+            f.write(transcript)
+
+        return send_file(transcript_path, as_attachment=True, download_name="transcript.txt")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
