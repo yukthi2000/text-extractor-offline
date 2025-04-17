@@ -12,7 +12,7 @@ import io
 app = Flask(__name__)
 CORS(app)
 
-model = whisper.load_model("medium")
+model = whisper.load_model("small")
 
 
 def extract_audio(video_path, audio_path):
@@ -111,9 +111,16 @@ def transcribe_video():
         transcript_path = os.path.join(temp_dir, "transcript.txt")
 
         video_file.save(video_path)
-        extract_audio(video_path, audio_path)
+        # extract_audio(video_path, audio_path)
+        extract_and_enhance_audio(video_path, audio_path)
 
-        result = model.transcribe(audio_path)
+        result = model.transcribe(audio_path,
+            language="en",
+            beam_size=5,
+            temperature=(0.0, 0.2, 0.4),  # Multi-temperature sampling
+            initial_prompt="Accurate transcription with timestamps.",
+            word_timestamps=True  # Include word-level timestamps
+        )
         segments = result.get("segments", [])
         
         transcript = ""
