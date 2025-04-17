@@ -12,7 +12,7 @@ import io
 app = Flask(__name__)
 CORS(app)
 
-model = whisper.load_model("base")
+model = whisper.load_model("medium")
 
 
 def extract_audio(video_path, audio_path):
@@ -53,7 +53,7 @@ def transcribe():
 
     # Reduce noise
     cleaned_audio_path = "cleaned_audio.wav"
-    reduce_noise(file_path, cleaned_audio_path)
+    reduce_noise(file_path, cleaned_audio_path) 
 
     # Transcribe the cleaned audio
     result = model.transcribe(cleaned_audio_path)
