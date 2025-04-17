@@ -102,7 +102,7 @@ try {
 
         <h1 className='text-2xl font-bold font-serif mb-4'>video to text converter</h1>
         <form onSubmit={handleSubmit}> 
-        <input type='file' className="file:mr-4 file:rounded-full file:border-0 file:bg-violet-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-violet-700 hover:file:bg-violet-100 dark:file:bg-violet-600 dark:file:text-violet-100 dark:hover:file:bg-violet-500" accept='.mp4' onChange={handleFile}/>
+        <input type='file' className="file:mr-4 file:rounded-full file:border-0 file:bg-violet-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-violet-700 hover:file:bg-violet-100 dark:file:bg-violet-600 dark:file:text-violet-100 dark:hover:file:bg-violet-500" accept='.mp4,.mkv' onChange={handleFile}/>
         <button type='submit' disabled={loading} class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           
         {loading ? 'Processing...' : 'Upload and Transcribe'}
