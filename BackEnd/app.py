@@ -25,6 +25,16 @@ def extract_audio(video_path, audio_path):
     subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
+def extract_and_enhance_audio(video_path, audio_path):
+    """Extract audio from video with enhanced preprocessing"""
+    cmd = [
+        "ffmpeg", "-i", video_path,
+        "-af", "highpass=f=100,lowpass=f=4000,afftdn=nf=-25,dynaudnorm",  # Noise reduction
+        "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le",  # Whisper's optimal format
+        "-y", audio_path
+    ]
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
 def reduce_noise(input_file, output_file):
     # Convert MP3 to WAV using pydub
     audio = AudioSegment.from_file(input_file)
