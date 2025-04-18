@@ -51,6 +51,10 @@ try {
 
   // If you want to also display the content (optional)
   const text = await blob.text();
+  const transcript_no_time = await blob.transcript_no_time();
+console.log('====================================');
+console.log(transcript_no_time);
+console.log('====================================');
   setTranscription(text);
 } catch (error) {
   console.error('Error:', error);
