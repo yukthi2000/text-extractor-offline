@@ -173,7 +173,7 @@ compute_type = "float16" if device == "cuda" else "int8"
 print(f"Using device: {device}, compute_type: {compute_type}")
 
 # Load Faster-Whisper model (small)
-model = WhisperModel("tiny", device=device, compute_type=compute_type)
+model = WhisperModel("base", device=device, compute_type=compute_type)
 
 def chunk_audio(audio_path, chunk_length_ms=10*60*1000, temp_dir=None):
     audio = AudioSegment.from_file(audio_path)
@@ -188,11 +188,13 @@ def chunk_audio(audio_path, chunk_length_ms=10*60*1000, temp_dir=None):
 def transcribe_chunks(chunk_paths):
     """Transcribes each chunk and returns concatenated transcript."""
     transcript = ""
+    transcript_no_time = ""
     for chunk_path in chunk_paths:
         segments, _ = model.transcribe(chunk_path, beam_size=5)
         for segment in segments:
             transcript += f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text}\n"
-    return transcript
+            transcript_no_time += f"{segment.text}\n"
+    return transcript,transcript_no_time
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
@@ -206,10 +208,10 @@ def transcribe():
 
     # Chunk the audio
     chunk_paths = chunk_audio(temp_audio_path)
-    transcript = transcribe_chunks(chunk_paths)
+    transcript,transcript_no_time = transcribe_chunks(chunk_paths)
 
     os.remove(temp_audio_path)
-    return jsonify({"text": transcript})
+    return jsonify({"text": transcript,"transcript_no_time":transcript_no_time})
 
 @app.route("/vidtranscribe", methods=["POST"])
 def transcribe_video():
