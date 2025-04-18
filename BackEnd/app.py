@@ -160,8 +160,8 @@ from pydub import AudioSegment
 from faster_whisper import WhisperModel
 import torch
 
-# os.environ["OMP_NUM_THREADS"] = "2"
-# os.environ["MKL_NUM_THREADS"] = "2"
+os.environ["OMP_NUM_THREADS"] = "2"
+os.environ["MKL_NUM_THREADS"] = "2"
 
 
 app = Flask(__name__)
