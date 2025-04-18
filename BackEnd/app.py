@@ -173,7 +173,7 @@ compute_type = "float16" if device == "cuda" else "int8"
 print(f"Using device: {device}, compute_type: {compute_type}")
 
 # Load Faster-Whisper model (small)
-model = WhisperModel("small", device=device, compute_type=compute_type)
+model = WhisperModel("tiny", device=device, compute_type=compute_type)
 
 def chunk_audio(audio_path, chunk_length_ms=10*60*1000, temp_dir=None):
     audio = AudioSegment.from_file(audio_path)
