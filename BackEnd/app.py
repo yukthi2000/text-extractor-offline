@@ -173,7 +173,7 @@ compute_type = "float16" if device == "cuda" else "int8"
 print(f"Using device: {device}, compute_type: {compute_type}")
 
 # Load Faster-Whisper model (small)
-model = WhisperModel("base", device=device, compute_type=compute_type)
+model = WhisperModel("small", device=device, compute_type=compute_type)
 
 def chunk_audio(audio_path, chunk_length_ms=10*60*1000, temp_dir=None):
     audio = AudioSegment.from_file(audio_path)
@@ -230,21 +230,26 @@ def transcribe_video():
 
         # Pass temp_dir to chunk_audio
         chunk_paths = chunk_audio(audio_path, temp_dir=temp_dir)
-        transcript = transcribe_chunks(chunk_paths)
+        transcript,transcript_no_time = transcribe_chunks(chunk_paths)
 
-        with open(transcript_path, "w", encoding="utf-8") as f:
-            f.write(transcript)
+        # with open(transcript_path, "w", encoding="utf-8") as f:
+        #     f.write(transcript)
 
-        with open(transcript_path, "rb") as f:
-            file_content = f.read()
+        # with open(transcript_path, "rb") as f:
+        #     file_content = f.read()
 
-        response = send_file(
-            io.BytesIO(file_content),
-            as_attachment=True,
-            download_name="transcript.txt",
-            mimetype='text/plain'
-        )
-        return response
+        # response = send_file(
+        #     io.BytesIO(file_content),
+        #     as_attachment=True,
+        #     download_name="transcript.txt",
+        #     mimetype='text/plain'
+        # )
+
+        return jsonify({
+            "transcript": transcript, 
+            "transcript_no_time": transcript_no_time
+        })
+        # return response
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
