@@ -9,6 +9,8 @@ function App() {
   const [loading,setloading] = useState(false)
   const[transcription, setTranscription] = useState('')
   const [alertMessage, setAlertMessage] = useState('')
+  const [error, setError] = useState('')
+
 
 const handleFile=(e)=>{
   setfile(e.target.files[0])
@@ -40,7 +42,7 @@ try {
   }
 
   // Handle file download
-  const blob = await response.blob();
+  // const blob = await response.blob();
   // const url = window.URL.createObjectURL(blob);
   // const link = document.createElement('a');
   // link.href = url;
@@ -50,19 +52,30 @@ try {
   // link.remove();
 
   // If you want to also display the content (optional)
-  const text = await blob.text();
-  const transcript_no_time = await blob.transcript_no_time();
-console.log('====================================');
-console.log(transcript_no_time);
-console.log('====================================');
-  setTranscription(text);
+ 
+  // Parse the JSON response
+  const data = await response.json();
+  
+  // Now you can access the transcript and transcript_no_time
+  const transcript = data.transcript;
+  const transcript_no_time = data.transcript_no_time;
+  
+  console.log('====================================');
+  console.log(data);
+  console.log('====================================');
+  
+  // Set the transcription in your state
+  setTranscription(transcript);
+  
+  // If you also want to store the transcript without timestamps
+  // setTranscriptionNoTime(transcript_no_time);
+  
 } catch (error) {
   console.error('Error:', error);
   setError(error.message);
 } finally {
   setloading(false);
 }
-
 }
 
 
